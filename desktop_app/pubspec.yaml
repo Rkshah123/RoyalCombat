@@ -1,0 +1,68 @@
+name: chess_arena
+description: "Royal Combat (Chess Arena) - a polished chess game for mobile & desktop."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Chess rules engine (legal moves, check, checkmate, draws)
+  chess: ^0.7.0
+  # State management
+  provider: ^6.1.2
+  # SVG rendering for the piece themes
+  flutter_svg: ^2.0.7
+  # Sound effects
+  audioplayers: ^6.4.0
+  # Persisted settings & match history
+  shared_preferences: ^2.5.6
+  # Storage locations helper
+  # Page transition animations
+  animations: ^2.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+# Launcher icons are generated from the game logo.
+flutter_launcher_icons:
+  image_path: "assets/images/logo/logo.png"
+  adaptive_icon_background: "#0E1626"
+  adaptive_icon_foreground: "assets/images/logo/logo.png"
+  adaptive_icon_monochrome: "assets/images/logo/logo.png"
+  android: "launcher_icon"
+  min_sdk_android: 21
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/pieces/woodtheme/
+    - assets/pieces/greentheme/
+    - assets/pieces/blacktheme/
+    - assets/audio/
+    - assets/fonts/
+    - assets/images/
+    - assets/images/logo/
+    - assets/ui/
+    - assets/matchsetup/
+
+  fonts:
+    - family: Algerian
+      fonts:
+        - asset: assets/fonts/Algerian.ttf
+    - family: GoudyStout
+      fonts:
+        - asset: assets/fonts/GoudyStout.ttf
+
+# The following section is specific to Flutter packages.

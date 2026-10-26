@@ -1,0 +1,49 @@
+# ============================================================
+#  Royal Combat (Chess Arena) — .gitignore
+#  Upload the SOURCE with this file; binaries go to Releases.
+# ============================================================
+
+# ---- Local tool cache (Flutter SDK copies, engine source) ----
+.tools/
+
+# ---- Build outputs (never commit) ----
+build/
+desktop_app/build/
+installer/RoyalCombat_Setup.exe
+*.zip
+*.apk
+
+# ---- Flutter / Dart internals ----
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+coverage/
+
+# ---- Windows toolchain ephemeral files ----
+desktop_app/windows/flutter/ephemeral/
+windows/flutter/ephemeral/
+
+# ---- Android local machine config ----
+android/.gradle/
+android/local.properties
+android/app/.cxx/
+*.jks
+*.keystore
+key.properties
+
+# ---- IDE / editor folders ----
+.idea/
+.vscode/
+*.iml
+
+# ---- OS junk ----
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---- Generated / temp ----
+**/__pycache__/
+*.log
