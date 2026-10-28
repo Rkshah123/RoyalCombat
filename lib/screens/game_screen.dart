@@ -92,10 +92,8 @@ class _GameScreenState extends State<GameScreen>
     _timers.configure(widget.time, widget.increment);
     _timers.onTimeout = _onTimeout;
     _whiteBottom = localPlayer.isWhite;
-    // New match begins: the players walk to the board while the starting
-    // sting plays. This is the only place starting.wav is triggered for a
-    // game, so it always lines up with the approach animation below.
-    SoundManager.instance.play(Sfx.starting, volume: 0.85);
+    // The starting fanfare is NOT played here anymore: it now belongs to the
+    // application launch (splash opening animation), per the sound design.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _entry.forward();
       _timers.start(whiteFirst: true);
@@ -1004,7 +1002,10 @@ class _GameScreenState extends State<GameScreen>
   Future<void> _exitGame() async {
     if (_finished) return;
     final palette = context.read<SettingsManager>().palette;
-    SoundManager.instance.play(Sfx.popWindow);
+    // Exiting an ONGOING match is a destructive action: instead of the old
+    // click/pop sound, a short warning sting plays here (only while the game
+    // is actually running, and only if sounds are enabled).
+    SoundManager.instance.exitWarning();
     final choice = await showDialog<String>(
       context: context,
       builder: (ctx) => _RoyalDialog(

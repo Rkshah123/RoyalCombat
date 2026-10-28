@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 
@@ -10,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'screens/splash_screen.dart';
 import 'services/match_history_service.dart';
 import 'services/settings_manager.dart';
+import 'services/sound_manager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +40,11 @@ Future<void> main() async {
   } catch (e) {
     debugPrint('Settings load failed, using defaults: $e');
   }
+  // The sound engine follows the live settings from now on, so the global
+  // Sound ON/OFF toggle works instantly on every screen and in every game.
+  SoundManager.instance.bind(settings);
+  // Pre-create the click player (silently) so the very first tap is instant.
+  unawaited(SoundManager.instance.warmUp());
   try {
     await history.load();
   } catch (e) {

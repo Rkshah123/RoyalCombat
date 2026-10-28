@@ -8,8 +8,15 @@ import '../widgets/app_background.dart';
 import 'main_menu.dart';
 
 /// Golden hour splash: the crest fades and scales in, the title follows.
+///
+/// [playOpeningSounds] is true for the real application launch (the royal
+/// fanfare plays exactly when the opening animation begins) and false when
+/// the screen is shown again via "Back to title screen", which must be
+/// completely silent.
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({super.key, this.playOpeningSounds = true});
+
+  final bool playOpeningSounds;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -32,10 +39,14 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    if (widget.playOpeningSounds) {
+      // The game-start fanfare now belongs to the application launch: it
+      // plays exactly while the crest's opening animation begins, and it is
+      // the ONLY launch sound (no extra beeps). It never fires on splash
+      // re-visits from Settings.
+      SoundManager.instance.play(Sfx.starting, volume: 0.85);
+    }
     _title.forward();
-    Future.delayed(const Duration(milliseconds: 900), () {
-      if (mounted) SoundManager.instance.play(Sfx.splashEnd, volume: 0.7);
-    });
     Future.delayed(const Duration(milliseconds: 2500), _go);
   }
 

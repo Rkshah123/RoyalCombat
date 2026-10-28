@@ -212,7 +212,8 @@ class SettingsScreen extends StatelessWidget {
                     child: TextButton.icon(
                       onPressed: () => Navigator.of(context).pushReplacement(
                         PageRouteBuilder(
-                          pageBuilder: (_, _, _) => const SplashScreen(),
+                          pageBuilder: (_, _, _) =>
+                            const SplashScreen(playOpeningSounds: false),
                           transitionsBuilder: (_, a, _, child) =>
                               FadeTransition(
                             opacity:

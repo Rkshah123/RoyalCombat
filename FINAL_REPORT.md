@@ -2,6 +2,68 @@
 
 Date: 26 Oct 2026 · Flutter 3.41.2 stable · Platforms: Android + Windows
 
+## Round 5 (28 Oct 2026) — sound engine overhaul: global toggle, launch fanfare, synthesized click, exit warning
+
+All five changes were applied to the shared source and shipped to **both**
+platforms (Android APK + Windows EXE/installer).
+
+1. **Launch beep removed everywhere.** The beep at app open was
+   `splash_end.wav`, fired 900 ms into the splash. It is deleted from the app
+   entirely (asset removed from both projects). At launch, **only** the
+   game-launching fanfare (`starting.wav`) plays, exactly when the splash
+   opening animation begins. `splash_end` was also removed from the `Sfx`
+   enum, so no code path can ever play it again.
+
+2. **Proper click sound — synthesized, not a file.** The old `ui_tap.wav`
+   was removed from both projects and from the enum. Every button, panel,
+   card, switch and chip click now plays a ~10 ms percussive click that is
+   generated in memory at runtime (44.1 kHz mono 16-bit PCM encoded as a WAV
+   blob, played through audioplayers' `BytesSource`): a broadband white-noise
+   transient (2 ms decay) + sharp 2.6 kHz tick + small 750 Hz low body, with a
+   hard first-sample attack — reads as a physical "click", not a tonal beep.
+   The first (tonal) version was rejected as still beep-like and redesigned.
+   Fallback (also not a file): the OS click via `SystemSound`.
+
+3. **Global Sound ON/OFF actually works.** Root cause: the sound engine only
+   synced its mute flag from a single legacy call site in `game_screen`, so
+   the Settings toggle had no effect anywhere else. `SoundManager` is now
+   `bind`-ed to the live `SettingsManager` in `main.dart` and listens to it:
+   toggling OFF instantly mutes everything on every screen/panel/gameplay and
+   **stops all sounds already playing** (all active players are stopped and
+   disposed); nothing can start while OFF, and nothing bypasses the setting
+   (every effect goes through the single `play` gate). Toggling ON re-enables
+   everything immediately. Verified live on desktop: with Sound OFF, clicking
+   around created **zero** audio players (log delta 0) with the switch visibly
+   OFF; with ON, clicks play again (delta +1).
+
+4. **Game-start sound moved to application launch.** The arena no longer plays
+   anything when a match starts (removed from `game_screen` `initState`).
+   The fanfare belongs to the splash only — and only on the true first
+   launch: Settings' "Back to title screen" now navigates to a silent
+   splash variant (`SplashScreen(playOpeningSounds: false)`), so re-visits
+   never replay the fanfare (and, per change 1, no beep either).
+
+5. **Exit warning during an ongoing game.** The old pop sound on the Exit
+   button was replaced with a synthesized two-beep 880 Hz caution sting
+   (~0.34 s, in-memory PCM like the click), played **only** when exiting an
+   ongoing match (`SoundManager.exitWarning()` in `_exitGame`), respecting
+   the global sound setting. Verified on desktop (Exit → sting + "LEAVE THE
+   MATCH?" dialog → Abandon → menu, artwork restored) and on the phone
+   (dialog + sting, "Stay" chosen to preserve the user's live game).
+
+**Verification:** `flutter analyze` clean; **37/37 tests pass** (6 new sound
+tests in `test/sound_manager_test.dart`: live toggle follow, muted play is a
+no-op, synth paths fail soft, WAV header validity of click + warning, beep
+gap silence, debounce). Android logcat clean (zero sound-engine errors) during
+launch → splash → menu taps → match start → exit dialog on the phone. Desktop
+release build verified live: fanfare-only launch, silent match start, exit
+warning flow, and the synthesized click creating real audio players.
+
+**Deliverables rebuilt:** `installer\RoyalCombat_Setup.exe` (28.9 MB —
+installer script is now location-independent, `{#SourcePath}`-relative),
+`RoyalCombat_Windows_Portable.zip` (30.2 MB), and the release APK (67.4 MB)
+installed on the phone (`KVCYGYUGGIAAGYTS`).
+
 ## Round 4 (26 Oct 2026) — background artwork, bigger home buttons
 
 **Application icon (desktop):** `logo.png` (project root, 1024×1024 crest) was
@@ -260,4 +322,5 @@ match_history_service), `widgets/` (button, chess_board, piece, timer).
 
 - Package id on Android remains `com.example.chess_arena`; legacy preferences
   on the phone were auto-healed on first launch of the new build.
-- No git repository — all changes are plain files on disk.
+- Project is a git repository (GitHub: Rkshah123/RoyalCombat); uploads are
+  done manually by the user.

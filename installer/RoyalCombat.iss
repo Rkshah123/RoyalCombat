@@ -16,13 +16,13 @@ DefaultDirName={autopf}\RoyalCombat
 DefaultGroupName={#AppName}
 UninstallDisplayName={#AppName} (Chess Arena)
 UninstallDisplayIcon={app}\{#AppExeName}
-OutputDir=C:\Users\ShahrukhKhan\Desktop\chess_arena\installer
+OutputDir={#SourcePath}
 OutputBaseFilename=RoyalCombat_Setup
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
 PrivilegesRequired=admin
-SetupIconFile=C:\Users\ShahrukhKhan\Desktop\chess_arena\desktop_app\windows\runner\resources\app_icon.ico
+SetupIconFile={#SourcePath}\..\desktop_app\windows\runner\resources\app_icon.ico
 Uninstallable=yes
 
 [Languages]
@@ -33,7 +33,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; \
     GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
 
 [Files]
-Source: "C:\Users\ShahrukhKhan\Desktop\chess_arena\desktop_app\build\windows\x64\runner\Release\*"; \
+Source: "{#SourcePath}\..\desktop_app\build\windows\x64\runner\Release\*"; \
     DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
